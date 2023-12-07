@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 import sqlite3
@@ -13,24 +13,15 @@ upload_folder = "static/img"
 
 app.mount("/static/img", StaticFiles(directory=upload_folder), name="static")
 
-class Personaje(BaseModel):
-    categoria_personaje: int
-    nombre: str
-    stand_habilidad: str
-    referencia_stand: str
-    fecha_nacimiento: str
-    fecha_muerte: str | None
-    genero: str
-    altura: str
-    peso: str
-    nacionalidad: str
-    descripcion: str
-    #imagen: str
 
-#class Partes(BaseModel):
-    #nombre: str
-    #descripcion: str
-    #imagen: str
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 BASE_URL_IMAGES_PARTES = "/imagenes/partes/"
 BASE_URL_IMAGES_PERSONAJES = "/imagenes/personajes/"
