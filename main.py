@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-import os
+#import os
 import sqlite3
 
 conn = sqlite3.connect("sql/jojos.db")
@@ -77,16 +77,12 @@ async def obtener_personajes_jojos():
 @app.post("/subirParte/")
 async def agregar_parte_jojos(nombre: str, descripcion: str, files: UploadFile = File(...)):
 
-    # Verifica si la carpeta existe, si no, la crea
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
-
     _ , extension = files.filename.split(".")
     nuevo_nombre = nombre
 
     # Guarda los archivos
-    with open(os.path.join(upload_folder ,f"{nuevo_nombre}.{extension}"), "wb") as f:
-        f.write(files.file.read())
+    #with open(os.path.join(upload_folder ,f"{nuevo_nombre}.{extension}"), "wb") as f:
+        #f.write(files.file.read())
 
     c = conn.cursor()
     c.execute("INSERT INTO partesJojos(nombre_parte, descripcion_parte, imagen_parte) VALUES (?, ?, ?)",
@@ -98,14 +94,12 @@ async def agregar_parte_jojos(nombre: str, descripcion: str, files: UploadFile =
 async def agregar_personaje_jojos(categoria_personaje: int, nombre: str, stand_habilidad: str, referencia_stand: str,
                                 fecha_nacimiento: str, fecha_muerte: str | None, genero: str, altura: str, peso: str, nacionalidadL: str,
                                 descripcion: str, files: UploadFile = File(...)):
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
 
     _ , extension = files.filename.split(".")
     nuevo_nombre = nombre
 
-    with open(os.path.join(upload_folder, f"{nuevo_nombre}.{extension}"), "wb") as f:
-        f.write(files.file.read())
+    #with open(os.path.join(upload_folder, f"{nuevo_nombre}.{extension}"), "wb") as f:
+    #    f.write(files.file.read())
 
     c = conn.cursor()
     c.execute("""INSERT INTO personajes(categoria_personaje, nombre, stand_habilidad, referencia_stand,
@@ -117,17 +111,17 @@ async def agregar_personaje_jojos(categoria_personaje: int, nombre: str, stand_h
 
 @app.get("/imagenes/partes/{nombre_parte}")
 async def ver_imagen_parte(nombre_parte: str):
-    image_path = os.path.join(upload_folder, nombre_parte)
-    if os.path.exists(image_path):
-        return FileResponse(image_path)
-    else:
+    #image_path = os.path.join(upload_folder, nombre_parte)
+    #if os.path.exists(image_path):
+    #    return FileResponse(image_path)
+    #else:
         return {"message": "Imagen no encontrada"}
 
 @app.get("/imagenes/personajes/{nombre_pesonaje}")
 async def ver_imagen_personaje(nombre_personaje: str):
-    image_path = os.path.join(upload_folder, nombre_personaje)
-    if os.path.exists(image_path):
-        return FileResponse(image_path)
-    else:
+    #image_path = os.path.join(upload_folder, nombre_personaje)
+    #if os.path.exists(image_path):
+    #    return FileResponse(image_path)
+    #else:
         return {"message": "Imagen no encontrada"}
 
