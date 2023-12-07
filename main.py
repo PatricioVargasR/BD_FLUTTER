@@ -16,8 +16,20 @@ async def partes(nombre_parte: str):
     c.execute("SELECT * FROM partesJojos WHERE nombre_parte = ?", (nombre_parte,))
     parte = None
     for row in c:
-        parte = {"Nombre": row[1], "Descripción": row[2], "Imagenes": row[3]}
+        parte = {"Identificador": row[0], "Nombre": row[1], "Descripción": row[2], "Imagenes": row[3]}
     return parte
+
+@app.get("/ver_personajes_partes/{parte_nombre}")
+async def personajes_partes(parte_nombre: str):
+    c = conn.cursor()
+    c.execute("SELECT j.nombre_parte, p.* FROM personajes p INNER JOIN partesJojos j on p.categoria_personaje = j.id_parte WHERE j.nombre_parte = ?", (parte_nombre,) )
+    response = []
+    for fila in c:
+        parte = {"Identificador": fila[0], "Nombre": fila[1], "Descripcion": fila[2], "imagenes": fila[3]}
+        response.append(parte)
+    if not response:
+        return []
+    return response
 
 @app.get("/personaje/{nombre_personaje}")
 async def personaje(nombre_personaje: str):
@@ -35,7 +47,7 @@ async def obtener_partes_jojos():
     c.execute("SELECT * FROM partesJojos")
     response = []
     for fila in c:
-        parte = {"Nombre": fila[1], "Descripcion": fila[2], "imagenes": fila[3]}
+        parte = {"Identificador": fila[0], "Nombre": fila[1], "Descripcion": fila[2], "imagenes": fila[3]}
         response.append(parte)
     if not response:
         return []
@@ -44,10 +56,10 @@ async def obtener_partes_jojos():
 @app.get("/personajeJojos")
 async def obtener_personajes_jojos():
     c = conn.cursor()
-    c.execute("SELECT * FROM personajes")
+    c.execute("SELECT j.nombre_parte, p.* FROM personajes p INNER JOIN partesJojos j on p.categoria_personaje = j.id_parte")
     response = []
     for fila in c:
-        personaje = {"Primera aparición": fila[1], "Nombre": fila[2], "Stand": fila[3], "Referencia": fila[4], "Fecha de nacimiento": fila[5], "Fecha de muerte": fila[6], "Género": fila[7], "Altura": fila[8], "Peso": fila[9], "Nacionalidad": fila[10], "Descripcion": fila[11], "Imagen": fila[12]}
+        personaje = {"Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
         response.append(personaje)
     if not response:
         return []
