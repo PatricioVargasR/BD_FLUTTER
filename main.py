@@ -6,10 +6,12 @@ conn = sqlite3.connect("sql/jojos.db")
 
 app = FastAPI()
 
+# Endpoint Raíz
 @app.get("/")
 async def inicio():
     return {"Developed by": "Patricio Vargas f:"}
 
+# Endpoint para ver una parte en especifico
 @app.get("/partes/{nombre_parte}")
 async def partes(nombre_parte: str):
     c = conn.cursor()
@@ -19,18 +21,21 @@ async def partes(nombre_parte: str):
         parte = {"Identificador": row[0], "Nombre": row[1], "Descripción": row[2], "Imagenes": row[3]}
     return parte
 
+# Endpoint para ver los personajes por partes
 @app.get("/ver_personajes_partes/{parte_nombre}")
 async def personajes_partes(parte_nombre: str):
     c = conn.cursor()
     c.execute("SELECT j.nombre_parte, p.* FROM personajes p INNER JOIN partesJojos j on p.categoria_personaje = j.id_parte WHERE j.nombre_parte = ?", (parte_nombre,) )
     response = []
     for fila in c:
-        parte = {"Identificador": fila[0], "Nombre": fila[1], "Descripcion": fila[2], "imagenes": fila[3]}
+        print(fila)
+        parte = {"Identificador": fila[1], "Primera Aparición": fila[0], "Nombre": fila[3], "Stand": fila[2], "Género": fila[8]}
         response.append(parte)
     if not response:
         return []
     return response
 
+# Endpoint para ver un personaje en específico
 @app.get("/personaje/{nombre_personaje}")
 async def personaje(nombre_personaje: str):
     c = conn.cursor()
@@ -38,9 +43,10 @@ async def personaje(nombre_personaje: str):
     personaje = None
     for fila in c:
         print(fila)
-        personaje = {"Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
+        personaje = {"Identificador": fila[1], "Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
     return personaje
 
+# Endpoint para ver todas las partes
 @app.get("/partesJojos")
 async def obtener_partes_jojos():
     c = conn.cursor()
@@ -53,18 +59,21 @@ async def obtener_partes_jojos():
         return []
     return response
 
+# Endpoint para ver todos los personajes
 @app.get("/personajeJojos")
 async def obtener_personajes_jojos():
     c = conn.cursor()
     c.execute("SELECT j.nombre_parte, p.* FROM personajes p INNER JOIN partesJojos j on p.categoria_personaje = j.id_parte")
     response = []
     for fila in c:
-        personaje = {"Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
+        print(fila)
+        personaje = {"Identificador": fila[1], "Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
         response.append(personaje)
     if not response:
         return []
     return response
 
+# Endpoint para subir una nueva Parte
 @app.post("/subirParte/")
 async def agregar_parte_jojos(nombre: str, descripcion: str, imagen_url: str):
 
@@ -74,6 +83,7 @@ async def agregar_parte_jojos(nombre: str, descripcion: str, imagen_url: str):
     conn.commit()
     return {"message": "Parte de Jojos agregada con éxito"}
 
+# Endpoint para subir un Personaje
 @app.post("/subirPersonaje")
 async def agregar_personaje_jojos(categoria_personaje: int, nombre: str, stand_habilidad: str, referencia_stand: str,
                                 fecha_nacimiento: str, fecha_muerte: str | None, genero: str, altura: str, peso: str, nacionalidadL: str,
