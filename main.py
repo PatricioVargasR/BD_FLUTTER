@@ -9,9 +9,9 @@ conn = sqlite3.connect("sql/jojos.db")
 
 app = FastAPI()
 
-upload_folder = "static/img"
+#upload_folder = "static/img"
 
-app.mount("/static/img", StaticFiles(directory=upload_folder), name="static")
+#app.mount("/static/img", StaticFiles(directory=upload_folder), name="static")
 
 
 app.add_middleware(
