@@ -18,7 +18,7 @@ async def partes(nombre_parte: str):
     c.execute("SELECT * FROM partesJojos WHERE nombre_parte = ?", (nombre_parte,))
     parte = None
     for row in c:
-        parte = {"Identificador": row[0], "Nombre": row[1], "Descripción": row[2], "Imagenes": row[3]}
+        parte = {"Identificador": row[0], "Nombre": row[1], "Descripcion": row[2], "Imagenes": row[3]}
     return parte
 
 # Endpoint para ver los personajes por partes
@@ -67,7 +67,7 @@ async def obtener_personajes_jojos():
     response = []
     for fila in c:
         print(fila)
-        personaje = {"Identificador": fila[1], "Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
+        personaje = {"Identificador": fila[1], "Primera aparicion": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Genero": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
         response.append(personaje)
     if not response:
         return []
