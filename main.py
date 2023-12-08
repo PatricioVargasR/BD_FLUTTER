@@ -29,7 +29,7 @@ async def personajes_partes(parte_nombre: str):
     response = []
     for fila in c:
         print(fila)
-        parte = {"Identificador": fila[1], "Primera Aparición": fila[0], "Nombre": fila[3], "Stand": fila[2], "Género": fila[8]}
+        parte = {"Identificador": fila[1], "Primera Aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de Nacimiento": fila[6], "Nacionalidad": fila[7], "Imagen": fila[8]}
         response.append(parte)
     if not response:
         return []
@@ -43,7 +43,7 @@ async def personaje(nombre_personaje: str):
     personaje = None
     for fila in c:
         print(fila)
-        personaje = {"Identificador": fila[1], "Primera aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Género": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
+        personaje = {"Identificador": fila[1], "Primera Aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de Nacimiento": fila[6], "Nacionalidad": fila[7], "Imagen": fila[8]}
     return personaje
 
 # Endpoint para ver todas las partes
@@ -67,7 +67,7 @@ async def obtener_personajes_jojos():
     response = []
     for fila in c:
         print(fila)
-        personaje = {"Identificador": fila[1], "Primera aparicion": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de nacimiento": fila[6], "Fecha de muerte": fila[7], "Genero": fila[8], "Altura": fila[9], "Peso": fila[10], "Nacionalidad": fila[11], "Descripcion": fila[12], "Imagen": fila[13]}
+        personaje = {"Identificador": fila[1], "Primera Aparición": fila[0], "Nombre": fila[3], "Stand": fila[4], "Referencia": fila[5], "Fecha de Nacimiento": fila[6], "Nacionalidad": fila[7], "Imagen": fila[8]}
         response.append(personaje)
     if not response:
         return []
@@ -86,14 +86,12 @@ async def agregar_parte_jojos(nombre: str, descripcion: str, imagen_url: str):
 # Endpoint para subir un Personaje
 @app.post("/subirPersonaje")
 async def agregar_personaje_jojos(categoria_personaje: int, nombre: str, stand_habilidad: str, referencia_stand: str,
-                                fecha_nacimiento: str, fecha_muerte: str | None, genero: str, altura: str, peso: str, nacionalidadL: str,
-                                descripcion: str, imagen_url:str):
+                                fecha_nacimiento: str, nacionalidad: str, imagen_url:str):
 
     c = conn.cursor()
     c.execute("""INSERT INTO personajes(categoria_personaje, nombre, stand_habilidad, referencia_stand,
-              fecha_nacimiento, fecha_muerte, genero, altura, peso, nacionalidad, descripcion, imagen_personaje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-              (categoria_personaje, nombre, stand_habilidad, referencia_stand, fecha_nacimiento, fecha_muerte, genero, altura, peso, nacionalidadL,
-              descripcion, imagen_url))
+              fecha_nacimiento, nacionalidad, descripcion, imagen_personaje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+              (categoria_personaje, nombre, stand_habilidad, referencia_stand, fecha_nacimiento, nacionalidad, imagen_url))
     conn.commit()
     return {"message": "Personaje agregado con éxito"}
 
