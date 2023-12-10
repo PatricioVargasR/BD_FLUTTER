@@ -101,7 +101,7 @@ async def agregar_parte_jojos(parte: Parte):
     conn.commit()
     return {"message": "Parte de Jojos agregada con éxito"}
 
-@app.delete("/borrarParte/{parte}")
+@app.delete("/borrarParte/{nombre}")
 async def eliminar_parte(nombre: str):
     try:
         c = conn.cursor()
