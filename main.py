@@ -132,10 +132,14 @@ async def eliminar_parte(nombre: str):
         return {"error-message": f"Error al eliminar los datos: {str(e)}"}
 
 
-@app.post("/actualizar_parte/{nombre}")
-async def actualizar_parte():
-    pass
-
+@app.put("/actualizar_parte/{nombre}")
+async def actualizar_parte(nombre: str, parte:Parte):
+    c = conn.cursor()
+    c.execute('UPDATE partesJojos SET nombre_parte = ?, descripcion_parte = ?, imagen_parte = ? WHERE nombre_parte = ?' , (
+        parte.nombre, parte.descripcion, parte.imagen, nombre
+    ))
+    conn.commit()
+    return {"message": "Actualizado con exito"}
 
 
 
