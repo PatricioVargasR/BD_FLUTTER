@@ -2,9 +2,17 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 import sqlite3
 
+from pydantic import BaseModel
+
 conn = sqlite3.connect("sql/jojos.db")
 
 app = FastAPI()
+
+
+class Parte(BaseModel):
+    nombre: str
+    descripcion: str
+    imagen: str
 
 # Endpoint Raíz
 @app.get("/")
@@ -75,11 +83,11 @@ async def obtener_personajes_jojos():
 
 # Endpoint para subir una nueva Parte
 @app.post("/subirParte/")
-async def agregar_parte_jojos(nombre: str, descripcion: str, imagen_url: str):
+async def agregar_parte_jojos(parte: Parte):
 
     c = conn.cursor()
     c.execute("INSERT INTO partesJojos(nombre_parte, descripcion_parte, imagen_parte) VALUES (?, ?, ?)",
-              (nombre, descripcion, imagen_url))
+              (parte.nombre, parte.descripcion, parte.imagen))
     conn.commit()
     return {"message": "Parte de Jojos agregada con éxito"}
 

@@ -30,7 +30,7 @@ CREATE TABLE personajes (
     nombre VARCHAR(50) NOT NULL,
     stand_habilidad VARCHAR(50) NOT NULL,
     referencia_stand VARCHAR(50) NOT NULL,
-    fecha_nacimiento DATE NOT NULL,
+    fecha_nacimiento VARCHAR(50) NOT NULL,
     nacionalidad VARCHAR(50) NOT NULL,
     imagen_personaje VARCHAR(191) NOT NULL,
     FOREIGN KEY (categoria_personaje) REFERENCES partesJojos(id_parte)
