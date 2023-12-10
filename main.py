@@ -14,6 +14,16 @@ class Parte(BaseModel):
     descripcion: str
     imagen: str
 
+class Personaje(BaseModel):
+    categoria_personaje: int
+    nombre: str
+    stand: str
+    referencia: str
+    fecha_nacimiento: str
+    nacionalidad: str
+    descripcion: str
+    imagen: str
+
 # Endpoint Raíz
 @app.get("/")
 async def inicio():
@@ -91,15 +101,59 @@ async def agregar_parte_jojos(parte: Parte):
     conn.commit()
     return {"message": "Parte de Jojos agregada con éxito"}
 
+@app.delete("/borrarParte/{parte}")
+async def eliminar_parte(nombre: str):
+    try:
+        c = conn.cursor()
+
+        # Obtener el ID de la parte que se va a eliminar
+        c.execute("SELECT id_parte FROM partesJojos WHERE nombre_parte = ?", (nombre,))
+        parte_id = c.fetchone()
+
+        if parte_id:
+            parte_id = parte_id[0]
+
+            # Eliminar personajes asociados a la parte
+            c.execute("DELETE FROM personajes WHERE categoria_personaje = ?", (parte_id,))
+
+            # Eliminar la parte
+            c.execute("DELETE FROM partesJojos WHERE id_parte = ?", (parte_id,))
+
+            conn.commit()
+
+            if c.rowcount == 0:
+                return {"error-message": "La parte no existe"}
+
+            return {"message": "Parte y personajes asociados eliminados correctamente"}
+
+        return {"error-message": "La parte no existe"}
+
+    except sqlite3.Error as e:
+        return {"error-message": f"Error al eliminar los datos: {str(e)}"}
+
+
+@app.post("/actualizar_parte/{nombre}")
+async def actualizar_parte():
+    pass
+
+
+
+
 # Endpoint para subir un Personaje
 @app.post("/subirPersonaje")
-async def agregar_personaje_jojos(categoria_personaje: int, nombre: str, stand_habilidad: str, referencia_stand: str,
-                                fecha_nacimiento: str, nacionalidad: str, imagen_url:str):
+async def agregar_personaje_jojos(personaje: Personaje):
 
     c = conn.cursor()
     c.execute("""INSERT INTO personajes(categoria_personaje, nombre, stand_habilidad, referencia_stand,
               fecha_nacimiento, nacionalidad, descripcion, imagen_personaje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-              (categoria_personaje, nombre, stand_habilidad, referencia_stand, fecha_nacimiento, nacionalidad, imagen_url))
+              (personaje.categoria_personaje, personaje.nombre, personaje.stand, personaje.referencia, personaje.fecha_nacimiento, personaje.descripcion, personaje.imagen))
     conn.commit()
     return {"message": "Personaje agregado con éxito"}
 
+
+@app.delete("/eliminar_personaje/{nombre_personaje}")
+async def eliminar_personaje(nombre: str):
+    c = conn.cursor()
+    c.execute("DELETE FROM personajes WEHERE nombre = ?",(nombre,))
+    conn.commit
+    return {"message": "Eliminado con éxito"}
