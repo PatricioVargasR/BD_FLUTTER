@@ -21,7 +21,6 @@ class Personaje(BaseModel):
     referencia: str
     fecha_nacimiento: str
     nacionalidad: str
-    descripcion: str
     imagen: str
 
 # Endpoint Raíz
@@ -149,15 +148,25 @@ async def agregar_personaje_jojos(personaje: Personaje):
 
     c = conn.cursor()
     c.execute("""INSERT INTO personajes(categoria_personaje, nombre, stand_habilidad, referencia_stand,
-              fecha_nacimiento, nacionalidad, descripcion, imagen_personaje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-              (personaje.categoria_personaje, personaje.nombre, personaje.stand, personaje.referencia, personaje.fecha_nacimiento, personaje.descripcion, personaje.imagen))
+              fecha_nacimiento, nacionalidad, imagen_personaje) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+              (personaje.categoria_personaje, personaje.nombre, personaje.stand, personaje.referencia, personaje.fecha_nacimiento,
+               personaje.nacionalidad, personaje.imagen))
     conn.commit()
     return {"message": "Personaje agregado con éxito"}
 
 
-@app.delete("/eliminar_personaje/{nombre_personaje}")
+@app.put("/actualizar_personaje/{nombre}")
+async def actualizar_parte(nombre: str, personaje:Personaje):
+    c = conn.cursor()
+    c.execute("""UPDATE personajes SET categoria_personaje = ?, nombre = ?, stand_habilidad = ?, referencia_stand = ?, fecha_nacimiento = ?, nacionalidad = ?, 
+               imagen_personaje = ?WHERE nombre = ?""" ,(personaje.categoria_personaje, personaje.nombre, personaje.stand, personaje.referencia, personaje.fecha_nacimiento,
+                personaje.nacionalidad, personaje.imagen, nombre))
+    conn.commit()
+    return {"message": "Actualizado con exito"}
+
+@app.delete("/eliminar_personaje/{nombre}")
 async def eliminar_personaje(nombre: str):
     c = conn.cursor()
-    c.execute("DELETE FROM personajes WEHERE nombre = ?",(nombre,))
-    conn.commit
+    c.execute("DELETE FROM personajes WHERE nombre = ?",(nombre,))
+    conn.commit()
     return {"message": "Eliminado con éxito"}
